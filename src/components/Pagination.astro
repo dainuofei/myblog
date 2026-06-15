@@ -1,0 +1,45 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  /** Base path for paginated pages, e.g. "/page" → "/page/2", "/page/3" */
+  baseUrl?: string;
+}
+
+const { currentPage, totalPages, baseUrl = "/page" } = Astro.props;
+
+function pageUrl(page: number): string {
+  if (page <= 1) return "/";
+  return `${baseUrl}/${page}`;
+}
+---
+
+{
+  totalPages > 1 && (
+    <nav class="mt-12 flex items-center justify-center gap-2 text-sm">
+      {
+        currentPage > 1 && (
+          <a
+            href={pageUrl(currentPage - 1)}
+            class="rounded-md px-3 py-2 text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors"
+          >
+            &larr; 上一页
+          </a>
+        )
+      }
+      <span class="px-3 py-2 text-gray-500 dark:text-gray-400">
+        {currentPage} / {totalPages}
+      </span>
+      {
+        currentPage < totalPages && (
+          <a
+            href={pageUrl(currentPage + 1)}
+            class="rounded-md px-3 py-2 text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 transition-colors"
+          >
+            下一页 &rarr;
+          </a>
+        )
+      }
+    </nav>
+  )
+}

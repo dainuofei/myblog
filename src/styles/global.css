@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply antialiased;
+  }
+
+  /* KaTeX overrides for dark mode */
+  .dark .katex {
+    color: #e5e7eb;
+  }
+
+  .dark .katex .mord,
+  .dark .katex .mopen,
+  .dark .katex .mclose,
+  .dark .katex .mrel,
+  .dark .katex .mbin {
+    color: #e5e7eb;
+  }
+}

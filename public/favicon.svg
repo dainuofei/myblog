@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- White rounded square background with subtle border -->
+  <rect width="512" height="512" rx="128" fill="#FFFFFF" stroke="#E5E7EB" stroke-width="4"/>
+  <!-- Geometric 'f' monogram -->
+  <g fill="#111827">
+    <!-- Vertical stem -->
+    <rect x="160" y="96" width="64" height="320" rx="10"/>
+    <!-- Top crossbar -->
+    <rect x="160" y="96" width="240" height="64" rx="10"/>
+    <!-- Middle crossbar -->
+    <rect x="160" y="256" width="192" height="64" rx="10"/>
+  </g>
+</svg>

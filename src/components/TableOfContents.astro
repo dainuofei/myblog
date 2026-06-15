@@ -1,0 +1,104 @@
+---
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  headings: Heading[];
+}
+
+const { headings } = Astro.props;
+
+// Filter to h2/h3 only, ignore h1 (post title)
+const toc = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+---
+
+{
+  toc.length > 1 && (
+    <nav
+      class="toc hidden xl:block sticky top-24 w-56 flex-shrink-0"
+      aria-label="目录"
+    >
+      <h2 class="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+        目录
+      </h2>
+      <ul class="space-y-1.5 text-sm leading-relaxed border-l border-gray-200 dark:border-gray-700">
+        {toc.map((heading) => (
+          <li>
+            <a
+              href={`#${heading.slug}`}
+              data-toc-link={heading.slug}
+              class={`block py-0.5 transition-colors duration-150 hover:text-blue-600 dark:hover:text-blue-400
+                ${heading.depth === 3 ? "pl-4 text-gray-400 dark:text-gray-500" : "pl-3 text-gray-600 dark:text-gray-400"}`}
+            >
+              {heading.text}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
+
+<script>
+  // Highlight current TOC item on scroll
+  function initToc() {
+    const links = document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]");
+    if (links.length === 0) return;
+
+    const headings = Array.from(
+      document.querySelectorAll("article h2[id], article h3[id]"),
+    );
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find the first visible heading
+        let activeId: string | null = null;
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            activeId = entry.target.id;
+            break;
+          }
+        }
+        // If no heading is intersecting (scrolled past all), use the last one
+        if (!activeId && entries.length > 0) {
+          const lastEntry = entries[entries.length - 1];
+          if (lastEntry.boundingClientRect.top < 0) {
+            // All headings above viewport → use last heading
+            activeId = headings[headings.length - 1]?.id ?? null;
+          }
+        }
+
+        links.forEach((link) => {
+          const slug = link.getAttribute("data-toc-link");
+          if (slug === activeId) {
+            link.classList.add(
+              "text-blue-600",
+              "dark:text-blue-400",
+              "font-medium",
+            );
+          } else {
+            link.classList.remove(
+              "text-blue-600",
+              "dark:text-blue-400",
+              "font-medium",
+            );
+          }
+        });
+      },
+      {
+        rootMargin: "-80px 0px -70% 0px",
+        threshold: 0,
+      },
+    );
+
+    headings.forEach((h) => observer.observe(h));
+  }
+
+  // Run on load
+  initToc();
+  // Re-run on Astro page transitions (if any)
+  document.addEventListener("astro:page-load", initToc);
+</script>

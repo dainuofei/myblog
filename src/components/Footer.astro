@@ -1,0 +1,53 @@
+---
+import { SITE_TITLE, AUTHOR_NAME, SITE_START_DATE } from "../lib/constants";
+---
+
+<footer class="border-t border-gray-200 dark:border-gray-800">
+  <div class="mx-auto max-w-3xl px-4 py-8 text-center text-sm text-gray-500 dark:text-gray-400">
+    <p>&copy; {new Date().getFullYear()} {SITE_TITLE} &mdash; {AUTHOR_NAME}</p>
+    <p class="mt-1">
+      Built with
+      <a href="https://astro.build" class="underline hover:text-gray-700 dark:hover:text-gray-200">Astro</a>
+      &middot; Powered by
+      <a href="https://katex.org" class="underline hover:text-gray-700 dark:hover:text-gray-200">KaTeX</a>
+    </p>
+    <p class="mt-2">
+      <span id="site-uptime">本站已运行 -- 天</span>
+    </p>
+  </div>
+</footer>
+
+<script define:vars={{ SITE_START_DATE }}>
+  const start = new Date(SITE_START_DATE + "T00:00:00");
+  const el = document.getElementById("site-uptime");
+
+  function fmt(n, unit) {
+    return n > 0 ? `${n} ${unit} ` : "";
+  }
+
+  function tick() {
+    const diff = Date.now() - start.getTime();
+    const sec = Math.floor(diff / 1000);
+    const min = Math.floor(sec / 60);
+    const hour = Math.floor(min / 60);
+    const day = Math.floor(hour / 24);
+    const year = Math.floor(day / 365);
+
+    const s = sec % 60;
+    const m = min % 60;
+    const h = hour % 24;
+    const d = day % 365;
+
+    let text = "本站已运行 ";
+    text += fmt(year, "年");
+    text += fmt(d, "天");
+    text += String(h).padStart(2, "0") + " 时 ";
+    text += String(m).padStart(2, "0") + " 分 ";
+    text += String(s).padStart(2, "0") + " 秒";
+
+    if (el) el.textContent = text;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
